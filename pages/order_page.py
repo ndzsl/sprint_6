@@ -4,7 +4,7 @@ from data import Data
 import allure
 
 
-class BasePage:
+class OrderPage:
 
     @allure.step('Инициализация драйвера')
     def __init__(self, driver):

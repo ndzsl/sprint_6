@@ -1,10 +1,11 @@
 from selenium.webdriver.support.wait import WebDriverWait
+from pages.base_page import BasePage
 from selenium.webdriver.support import expected_conditions as EC
 from data import Data
 import allure
 
 
-class BasePage:
+class MainPage:
 
     @allure.step('Инициализация драйвера')
     def __init__(self, driver):

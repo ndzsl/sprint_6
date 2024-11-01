@@ -2,18 +2,20 @@ import allure
 import pytest
 from locators.main_page_locators import MainPageLocators
 
-class TestScooterOrder:
-    @allure.title('Тест оформления заказа на самокат')
-    @pytest.mark.parametrize('button_element, delivery_date',
+
+class TestOrderPage:
+    @allure.title('Тест заказа самоката')
+    @pytest.mark.parametrize('button, date',
                              [
-                                 [MainPageLocators.HEADER_ORDER_BUTTON, '15.11.2024'],
-                                 [MainPageLocators.HEADER_ORDER_BUTTON, '20.11.2024'],
-                             ])
-    def test_place_scooter_order(self, main_page_page, order_page, button_element, delivery_date):
-        home_page.accept_cookies()
-        home_page.click_order_button(button_element)
-        order_page.fill_order_details()
-        order_page.click_next()
-        order_page.fill_rental_details(delivery_date)
-        order_page.place_order_and_confirm()
-        assert order_page.verify_order_success()
+                                 [MainPageLocators.ORDER_BUTTON_IN_HEADER, '27.10.2024'],
+                                 [MainPageLocators.ORDER_BUTTON_IN_FOOTER, '07.11.2024']
+                             ]
+                             )
+    def test_order_scooter(self, main_page, order_page, button, date):
+        main_page.click_on_cookie()
+        main_page.click_on_order_button(button)
+        order_page.set_data_for_whom_scooter()
+        order_page.click_next_button()
+        order_page.set_data_about_rent(date)
+        order_page.click_on_order_then_confirm_button()
+        assert order_page.check_order_is_done()

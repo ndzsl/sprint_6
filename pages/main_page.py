@@ -1,55 +1,42 @@
-from selenium.webdriver.support.wait import WebDriverWait
 from pages.base_page import BasePage
-from selenium.webdriver.support import expected_conditions as EC
-from data import Data
+from locators.main_page_locators import MainPageLocators
 import allure
 
 
-class MainPage:
+class MainPage(BasePage):
 
-    @allure.step('Инициализация драйвера')
-    def __init__(self, driver):
-        self.driver = driver
+    @allure.step('Принимаем куки')
+    def click_on_cookie(self):
+        self.click_on_element(MainPageLocators.COOKIE)
 
-    @allure.step('Переход по URL')
-    def navigate_to(self, url):
-        self.driver.get(url)
+    @allure.step('Скролл страницы до последнего вопроса')
+    def scroll_page_to_last_question(self):
+        self.scroll_page(MainPageLocators.QUESTION_LAST)
 
-    @allure.step('Ожидание и поиск элемента на странице')
-    def wait_for_element(self, locator):
-        WebDriverWait(self.driver, Data.WAIT_TIME).until(EC.visibility_of_element_located(locator))
-        return self.driver.find_element(*locator)
+    @allure.step('Кликаем на вопрос')
+    def click_on_question(self, number):
+        question_loc = self.reformate_locator(MainPageLocators.QUESTION, number)
+        self.click_on_element(question_loc)
 
-    @allure.step('Клик по элементу')
-    def click_element(self, locator):
-        element = self.wait_for_element(locator)
-        element.click()
+    @allure.step('Получаем текст ответа')
+    def get_text_from_answer(self, number):
+        answer_loc = self.reformate_locator(MainPageLocators.ANSWER, number)
+        return self.get_text_from_element(answer_loc)
 
-    @allure.step('Получение текста элемента')
-    def fetch_element_text(self, locator):
-        element = self.wait_for_element(locator)
-        return element.text
+    @allure.step('Клик на вопрос и получение текста ответа')
+    def click_to_question_get_answer(self, number):
+        self.click_on_question(number)
+        return self.get_text_from_answer(number)
 
-    @allure.step('Ввод текста в элемент')
-    def input_text(self, locator, text):
-        element = self.wait_for_element(locator)
-        element.send_keys(text)
+    @allure.step('Клик на кнопку "Заказать"')
+    def click_on_order_button(self, button):
+        self.click_on_element(button)
 
-    @allure.step('Прокрутка страницы до элемента')
-    def scroll_to_element(self, locator):
-        element = self.wait_for_element(locator)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+    @allure.step('Клик на лого Яндекс')
+    def click_on_logo_yandex(self):
+        self.click_on_element(MainPageLocators.LOGO_YANDEX)
 
-    @allure.step('Форматирование локатора')
-    def format_locator(self, locator, number):
-        method, locator = locator
-        formatted_locator = locator.format(number)
-        return method, formatted_locator
-
-    @allure.step('Переключение на вторую вкладку')
-    def switch_to_second_tab(self):
-        self.driver.switch_to.window(self.driver.window_handles[1])
-
-    @allure.step('Получение текущего URL')
-    def current_url(self):
-        return self.driver.current_url
+    @allure.step('Поиск кнопки "Найти" на странице Дзена')
+    def search_find_button(self):
+        self.switch_to_second_browser_window()
+        self.find_element_and_wait(MainPageLocators.BUTTON_FIND)

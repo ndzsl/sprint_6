@@ -6,49 +6,49 @@ import allure
 
 class BasePage:
 
-    @allure.step('Инициализация драйвера')
+    @allure.step('Загрузка драйвера')
     def __init__(self, driver):
         self.driver = driver
 
-    @allure.step('Переход по URL')
-    def navigate_to(self, url):
+    @allure.step('Загружаем страницу')
+    def get_url(self, url):
         self.driver.get(url)
 
-    @allure.step('Ожидание и поиск элемента на странице')
-    def wait_for_element(self, locator):
+    @allure.step('Поиск элемента на страницы и ожидание загрузки')
+    def find_element_and_wait(self, locator):
         WebDriverWait(self.driver, Data.WAIT_TIME).until(EC.visibility_of_element_located(locator))
         return self.driver.find_element(*locator)
 
-    @allure.step('Клик по элементу')
-    def click_element(self, locator):
-        element = self.wait_for_element(locator)
+    @allure.step('Клик на элемент')
+    def click_on_element(self, locator):
+        element = self.find_element_and_wait(locator)
         element.click()
 
     @allure.step('Получение текста элемента')
-    def fetch_element_text(self, locator):
-        element = self.wait_for_element(locator)
+    def get_text_from_element(self, locator):
+        element = self.find_element_and_wait(locator)
         return element.text
 
-    @allure.step('Ввод текста в элемент')
-    def input_text(self, locator, text):
-        element = self.wait_for_element(locator)
+    @allure.step('Ввод текста в поле')
+    def set_text_to_element(self, locator, text):
+        element = self.find_element_and_wait(locator)
         element.send_keys(text)
 
-    @allure.step('Прокрутка страницы до элемента')
-    def scroll_to_element(self, locator):
-        element = self.wait_for_element(locator)
+    @allure.step('Скролл страницы до нужного элемента')
+    def scroll_page(self, locator):
+        element = self.find_element_and_wait(locator)
         self.driver.execute_script("arguments[0].scrollIntoView();", element)
 
     @allure.step('Форматирование локатора')
-    def format_locator(self, locator, number):
+    def reformate_locator(self, locator, number):
         method, locator = locator
-        formatted_locator = locator.format(number)
-        return method, formatted_locator
+        locator = locator.format(number)
+        return method, locator
 
-    @allure.step('Переключение на вторую вкладку')
-    def switch_to_second_tab(self):
+    @allure.step('Переход на вторую вкладку браузера')
+    def switch_to_second_browser_window(self):
         self.driver.switch_to.window(self.driver.window_handles[1])
 
-    @allure.step('Получение текущего URL')
-    def current_url(self):
+    @allure.step('Получение url страницы')
+    def get_current_url(self):
         return self.driver.current_url
